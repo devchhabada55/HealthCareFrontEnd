@@ -80,6 +80,15 @@ export const getMentalHealthHistory = async () => {
   return response.data;
 };
 
+export const updateMentalHealthDetails = async (data: {
+  comtType?: string;
+  comtDescription?: string;
+  // Add other mental health details as needed
+}) => {
+  const response = await api.put('/api/mental-health/details', data);
+  return response.data;
+};
+
 // Sleep API calls
 export const uploadSleepFile = async (file: File) => {
   const formData = new FormData();

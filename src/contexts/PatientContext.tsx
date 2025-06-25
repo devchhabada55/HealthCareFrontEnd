@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface PatientInfo {
   name: string;
+  age: number;
+  gender: 'Male' | 'Female' | '';
   // Add other patient properties here as needed
 }
 
@@ -14,7 +16,9 @@ const PatientContext = createContext<PatientContextType | undefined>(undefined);
 
 export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [patient, setPatient] = useState<PatientInfo | null>({
-    name: 'John', // Hardcoded initial name
+    name: 'John',
+    age: 45, // Example age
+    gender: 'Male', // Example gender
     // Add other initial patient data here
   });
 

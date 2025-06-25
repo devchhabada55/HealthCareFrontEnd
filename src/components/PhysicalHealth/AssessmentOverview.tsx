@@ -17,10 +17,10 @@ const AssessmentOverview: React.FC<AssessmentOverviewProps> = ({
   onUpdateUserData
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
+    <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-          <Activity className="w-8 h-8 text-blue-500 mr-3" />
+          <Activity className="w-8 h-8 text-purple-500 mr-3" />
           Physical Health Assessment
         </h1>
         {isEditMode && (

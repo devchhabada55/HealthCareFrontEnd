@@ -52,10 +52,10 @@ const DetailedParameters: React.FC<DetailedParametersProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 border-t-4 border-blue-500">
+    <div className="bg-white rounded-lg shadow-lg p-6 border-t-4 border-purple-500">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
-          <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+          <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
           <h2 className="text-xl font-semibold text-gray-800">
             {activeMetric} - Detailed Parameters
           </h2>

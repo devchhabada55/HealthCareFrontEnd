@@ -1,29 +1,28 @@
 import React from 'react';
 import { Target, Plus, Trash2 } from 'lucide-react';
-import { RadarDataPoint } from '../../hooks/usePhysicalHealthData';
-import { getScoreColor, getScoreLabel } from '../../utils/healthUtils';
-import { 
-  RadarChart, 
-  PolarGrid, 
-  PolarAngleAxis, 
-  PolarRadiusAxis, 
+import {
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
   Radar,
   ResponsiveContainer
 } from 'recharts';
+import { MentalRadarDataPoint } from '../../hooks/useMentalHealthData';
 
-interface FitnessAssessmentProps {
-  radarData: RadarDataPoint[];
+interface MentalAssessmentProps {
+  mentalRadarData: MentalRadarDataPoint[];
   isEditMode: boolean;
   isAdmin: boolean;
   activeMetric: string | null;
   onSetActiveMetric: (metric: string | null) => void;
   onAddRadarDataPoint: () => void;
-  onUpdateRadarDataPoint: (index: number, field: string, value: string) => void;
+  onUpdateRadarDataPoint: (index: number, field: keyof MentalRadarDataPoint, value: any) => void;
   onRemoveRadarDataPoint: (index: number) => void;
 }
 
-const FitnessAssessment: React.FC<FitnessAssessmentProps> = ({
-  radarData,
+const MentalAssessment: React.FC<MentalAssessmentProps> = ({
+  mentalRadarData,
   isEditMode,
   isAdmin,
   activeMetric,
@@ -37,7 +36,7 @@ const FitnessAssessment: React.FC<FitnessAssessmentProps> = ({
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold flex items-center">
           <Target className="w-6 h-6 mr-2 text-purple-500" />
-          Comprehensive Fitness Assessment
+          Comprehensive Mental Assessment
         </h2>
         {isAdmin && isEditMode && (
           <span className="text-sm text-purple-600 font-medium">
@@ -58,7 +57,7 @@ const FitnessAssessment: React.FC<FitnessAssessmentProps> = ({
       {/* Enhanced Radar Chart */}
       <div className="mb-8">
         <ResponsiveContainer width="100%" height={400}>
-          <RadarChart data={radarData} margin={{ top: 40, right: 40, bottom: 40, left: 40 }}>
+          <RadarChart data={mentalRadarData} margin={{ top: 40, right: 40, bottom: 40, left: 40 }}>
             <PolarGrid gridType="polygon" />
             <PolarAngleAxis 
               dataKey="subject" 
@@ -67,14 +66,14 @@ const FitnessAssessment: React.FC<FitnessAssessmentProps> = ({
             />
             <PolarRadiusAxis 
               angle={90} 
-              domain={[0, 100]} 
+              domain={[0, 6]} 
               tick={{ fontSize: 10, fill: '#6b7280' }}
-              tickCount={6}
+              tickCount={7}
             />
             <Radar 
               name="Your Score" 
-              dataKey="score" 
-              stroke="#8b5cf6" 
+              dataKey="value" 
+              stroke="#8b5cf6"
               fill="#8b5cf6" 
               fillOpacity={0.25}
               strokeWidth={2}
@@ -84,19 +83,23 @@ const FitnessAssessment: React.FC<FitnessAssessmentProps> = ({
         </ResponsiveContainer>
       </div>
 
-      {/* Individual Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        {radarData.map((metric, index) => {
+      {/* Individual Metric Cards - 3 buttons per row, names only */}
+      <div className="grid grid-cols-3 gap-4">
+        {mentalRadarData.map((metric, index) => {
           const isActive = activeMetric === metric.subject;
 
           return (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`border rounded-lg p-4 transition-all duration-200 ${
                 isAdmin && isEditMode 
                   ? 'bg-purple-50 border-purple-200' 
-                  : `cursor-pointer transform hover:scale-105 ${isActive ? 'ring-2 ring-purple-500 shadow-lg' : ''}`
-              } ${!isAdmin || !isEditMode ? getScoreColor(metric.score) : ''}`}
+                  : `cursor-pointer transform hover:scale-105 ${
+                      isActive 
+                        ? 'ring-2 ring-purple-500 shadow-lg' 
+                        : metric.colorClass || 'bg-gray-50 hover:bg-gray-100'
+                    }`
+              }`}
               onClick={!isAdmin || !isEditMode ? () => onSetActiveMetric(isActive ? null : metric.subject) : undefined}
             >
               <div className="text-center">
@@ -110,22 +113,18 @@ const FitnessAssessment: React.FC<FitnessAssessmentProps> = ({
                       rows={2}
                     />
                     
-                    {/* Editable Score */}
+                    {/* Editable Score (hidden from view) */}
                     <div className="flex items-center justify-center mb-2">
                       <input
                         type="number"
+                        step="0.1"
                         min="0"
-                        max="100"
-                        value={metric.score}
-                        onChange={(e) => onUpdateRadarDataPoint(index, 'score', e.target.value)}
+                        max="6"
+                        value={metric.value}
+                        onChange={(e) => onUpdateRadarDataPoint(index, 'value', parseFloat(e.target.value))}
                         className="text-2xl font-bold w-16 text-center bg-transparent border border-purple-300 rounded px-1 focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
-                      <span className="text-lg text-gray-500 ml-1">/100</span>
-                    </div>
-                    
-                    {/* Current Label */}
-                    <div className="text-xs opacity-75 mb-2">
-                      {getScoreLabel(metric.score)}
+                      <span className="text-lg text-gray-500 ml-1">/6</span>
                     </div>
                     
                     {/* Remove Button */}
@@ -143,7 +142,7 @@ const FitnessAssessment: React.FC<FitnessAssessmentProps> = ({
                   </>
                 ) : (
                   <>
-                    <h3 className="font-bold text-sm mb-2 leading-tight">
+                    <h3 className="font-medium text-sm leading-tight">
                       {metric.subject}
                     </h3>
                   </>
@@ -170,4 +169,4 @@ const FitnessAssessment: React.FC<FitnessAssessmentProps> = ({
   );
 };
 
-export default FitnessAssessment; 
+export default MentalAssessment;

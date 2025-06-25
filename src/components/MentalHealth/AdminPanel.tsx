@@ -17,7 +17,7 @@ interface AdminPanelProps {
   setShowAdminPanel: (value: boolean) => void;
   onSaveChanges: () => void;
   onAddKeyFinding: () => void;
-  onAddRecommendation: () => void;
+  onAddActionItem: () => void;
   onAddNote: () => void;
 }
 
@@ -29,7 +29,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   setShowAdminPanel,
   onSaveChanges,
   onAddKeyFinding,
-  onAddRecommendation,
+  onAddActionItem,
   onAddNote
 }) => {
   if (!isAdmin) return null;
@@ -42,7 +42,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
           <div className="flex items-center space-x-4">
             <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
             <span className="px-3 py-1 bg-purple-100 text-purple-800 text-sm rounded-full">
-              Physical Health Report
+              Mental Health Report
             </span>
           </div>
           <div className="flex items-center space-x-2">
@@ -103,11 +103,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
               Add Finding
             </button>
             <button
-              onClick={onAddRecommendation}
+              onClick={onAddActionItem}
               className="flex items-center justify-center px-3 py-2 bg-white border border-purple-300 rounded-md text-purple-700 hover:bg-purple-50"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Recommendation
+              Add Action Item
             </button>
             <button
               onClick={onAddNote}

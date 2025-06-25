@@ -27,7 +27,6 @@ const MuscleStrengthRecoveryDetails: React.FC<MuscleStrengthRecoveryDetailsProps
       {/* Skeletal Muscle Mass - Gauge */}
       <div className="bg-gray-50 rounded-lg p-6">
         <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <div className="w-3 h-3 bg-indigo-500 rounded-full mr-2"></div>
           Skeletal Muscle Mass Analysis
         </h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

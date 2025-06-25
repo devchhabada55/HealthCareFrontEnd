@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Dumbbell, Edit3, Save, Info } from 'lucide-react';
+import {Edit3, Save, Info } from 'lucide-react';
 
 interface FunctionalCapacityDetailsProps {
   isAdmin?: boolean;
@@ -19,6 +19,42 @@ const FunctionalCapacityDetails: React.FC<FunctionalCapacityDetailsProps> = ({
   const [ruffierData, setRuffierData] = useState({
     score: 8.2
   });
+
+  const getMetricStyle = (type: 'handgrip' | 'ruffier', value: number) => {
+    let borderColor = 'border-gray-100';
+    let textColor = 'text-gray-900';
+
+    if (type === 'handgrip') {
+      if (value < 34.7) {
+        borderColor = 'border-red-400';
+        textColor = 'text-red-600';
+      } else if (value >= 34.7 && value <= 54.5) {
+        borderColor = 'border-yellow-400';
+        textColor = 'text-yellow-600';
+      } else {
+        borderColor = 'border-green-400';
+        textColor = 'text-green-600';
+      }
+    } else if (type === 'ruffier') {
+      if (value >= 0 && value <= 5) {
+        borderColor = 'border-green-400';
+        textColor = 'text-green-600';
+      } else if (value > 5 && value <= 10) {
+        borderColor = 'border-lime-400';
+        textColor = 'text-lime-600';
+      } else if (value > 10 && value <= 15) {
+        borderColor = 'border-yellow-400';
+        textColor = 'text-yellow-600';
+      } else if (value > 15 && value <= 20) {
+        borderColor = 'border-orange-400';
+        textColor = 'text-orange-600';
+      } else {
+        borderColor = 'border-red-400';
+        textColor = 'text-red-600';
+      }
+    }
+    return { borderColor, textColor };
+  };
 
   // Info card content
   const infoContent = {
@@ -59,43 +95,45 @@ const FunctionalCapacityDetails: React.FC<FunctionalCapacityDetailsProps> = ({
     <>
       {showInfoCard && <InfoCard type={showInfoCard} />}
       {/* Handgrip Strength and Ruffier-Dickson Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* We can resize it to 2 columns if needed */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Handgrip Strength Card */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className={
+          `bg-white rounded-xl shadow-lg border ${getMetricStyle('handgrip', handgripData.left).borderColor} overflow-hidden`
+        }>
           {/* Header */}
           <div className="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Handgrip Strength</h3>
+                  <p className="text-sm text-gray-600">Functional muscle strength</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setShowInfoCard('handgrip')}
                   className="text-gray-400 hover:text-blue-600 transition-colors p-1"
                 >
                   <Info className="w-4 h-4" />
                 </button>
-                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <Dumbbell className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Handgrip Strength</h3>
-                  <p className="text-sm text-gray-600">Functional muscle strength</p>
-                </div>
+                {isAdmin && isEditMode && (
+                  <button
+                    onClick={() => setEditingField(editingField === 'handgrip' ? null : 'handgrip')}
+                    className="text-blue-600 hover:text-blue-800 p-1"
+                  >
+                    {editingField === 'handgrip' ? <Save className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
-              {isAdmin && isEditMode && (
-                <button
-                  onClick={() => setEditingField(editingField === 'handgrip' ? null : 'handgrip')}
-                  className="text-blue-600 hover:text-blue-800 p-1"
-                >
-                  {editingField === 'handgrip' ? <Save className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
-                </button>
-              )}
             </div>
           </div>
 
           {/* Main Content */}
-          <div className="p-6">
+          <div className="p-6 flex flex-col">
             {/* Primary Metric */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-14">
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center space-x-8">
                 <div className="text-center">
                   {isAdmin && isEditMode && editingField === 'handgrip' ? (
                     <div className="space-y-2">
@@ -110,7 +148,7 @@ const FunctionalCapacityDetails: React.FC<FunctionalCapacityDetailsProps> = ({
                     </div>
                   ) : (
                     <>
-                      <div className="text-4xl font-bold text-yellow-600 mb-1">{handgripData.left}</div>
+                      <div className={`text-4xl font-bold ${getMetricStyle('handgrip', handgripData.left).textColor} mb-1`}>{handgripData.left}</div>
                       <div className="text-sm text-gray-500 font-medium">kg (Left)</div>
                     </>
                   )}
@@ -129,7 +167,7 @@ const FunctionalCapacityDetails: React.FC<FunctionalCapacityDetailsProps> = ({
                     </div>
                   ) : (
                     <>
-                      <div className="text-4xl font-bold text-yellow-600 mb-1">{handgripData.right}</div>
+                      <div className={`text-4xl font-bold ${getMetricStyle('handgrip', handgripData.right).textColor} mb-1`}>{handgripData.right}</div>
                       <div className="text-sm text-gray-500 font-medium">kg (Right)</div>
                     </>
                   )}
@@ -141,68 +179,69 @@ const FunctionalCapacityDetails: React.FC<FunctionalCapacityDetailsProps> = ({
             <div className="space-y-3 mb-6">
               <div className="text-sm font-medium text-gray-700 mb-2">Age-Specific Ranges (45-49 years, Male)</div>
               
-              <div className="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg border-l-4 border-red-400">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              <div className="flex items-center justify-start gap-x-4 py-2 px-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-l-4 border-red-400">
+                <div className="text-sm text-red-700 font-medium">&lt; 34.7 kg</div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-px bg-red-500 mr-2"></div>
                   <span className="text-sm font-medium text-red-800">Weak</span>
                 </div>
-                <div className="text-sm text-red-700 font-medium">&lt; 34.7 kg</div>
               </div>
               
-              <div className="flex items-center justify-between py-2 px-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-yellow-800">Normal (Your Level)</span>
-                </div>
+              <div className="flex items-center justify-start gap-x-4 py-2 px-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-l-4 border-yellow-400">
                 <div className="text-sm text-yellow-700 font-medium">34.7 - 54.5 kg</div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-px bg-yellow-500 mr-2"></div>
+                  <span className="text-sm font-medium text-yellow-800">Normal</span>
+                </div>
               </div>
               
-              <div className="flex items-center justify-between py-2 px-3 bg-green-50 rounded-lg border-l-4 border-green-400">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div className="flex items-center justify-start gap-x-4 py-2 px-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-l-4 border-green-400">
+                <div className="text-sm text-green-700 font-medium">&gt; 54.5 kg</div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-px bg-green-500 mr-2"></div>
                   <span className="text-sm font-medium text-green-800">Strong</span>
                 </div>
-                <div className="text-sm text-green-700 font-medium">&gt; 54.5 kg</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Ruffier-Dickson Recovery Test Card */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className={
+          `bg-white rounded-xl shadow-lg border ${getMetricStyle('ruffier', ruffierData.score).borderColor} overflow-hidden`
+        }>
           {/* Header */}
           <div className="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Ruffier-Dickson Index</h3>
+                  <p className="text-sm text-gray-600">Cardiovascular recovery</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setShowInfoCard('ruffier')}
                   className="text-gray-400 hover:text-blue-600 transition-colors p-1"
                 >
                   <Info className="w-4 h-4" />
                 </button>
-                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <Heart className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Ruffier-Dickson Index</h3>
-                  <p className="text-sm text-gray-600">Cardiovascular recovery</p>
-                </div>
+                {isAdmin && isEditMode && (
+                  <button
+                    onClick={() => setEditingField(editingField === 'ruffier' ? null : 'ruffier')}
+                    className="text-blue-600 hover:text-blue-800 p-1"
+                  >
+                    {editingField === 'ruffier' ? <Save className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
-              {isAdmin && isEditMode && (
-                <button
-                  onClick={() => setEditingField(editingField === 'ruffier' ? null : 'ruffier')}
-                  className="text-blue-600 hover:text-blue-800 p-1"
-                >
-                  {editingField === 'ruffier' ? <Save className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
-                </button>
-              )}
             </div>
           </div>
 
           {/* Main Content */}
           <div className="p-6">
             {/* Primary Metric */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-center mb-6">
               <div className="flex items-center space-x-4">
                 <div className="text-center">
                   {isAdmin && isEditMode && editingField === 'ruffier' ? (
@@ -218,7 +257,7 @@ const FunctionalCapacityDetails: React.FC<FunctionalCapacityDetailsProps> = ({
                     </div>
                   ) : (
                     <>
-                      <div className="text-4xl font-bold text-green-600 mb-1">{ruffierData.score}</div>
+                      <div className={`text-4xl font-bold ${getMetricStyle('ruffier', ruffierData.score).textColor} mb-1`}>{ruffierData.score}</div>
                       <div className="text-sm text-gray-500 font-medium">RDI Score</div>
                     </>
                   )}
@@ -230,44 +269,44 @@ const FunctionalCapacityDetails: React.FC<FunctionalCapacityDetailsProps> = ({
             <div className="space-y-3 mb-6">
               <div className="text-sm font-medium text-gray-700 mb-2">Cardiovascular Condition Categories</div>
               
-              <div className="flex items-center justify-between py-2 px-3 bg-green-50 rounded-lg border-l-4 border-green-400">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div className="flex items-center justify-start gap-x-4 py-2 px-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-l-4 border-green-800">
+                <div className="text-sm text-green-700 font-medium">0 - 5</div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-px bg-green-500 mr-2"></div>
                   <span className="text-sm font-medium text-green-800">Very Good</span>
                 </div>
-                <div className="text-sm text-green-700 font-medium">0 - 5</div>
               </div>
               
-              <div className="flex items-center justify-between py-2 px-3 bg-lime-50 rounded-lg border-l-4 border-lime-400">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-lime-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-lime-800">Good (Your Level)</span>
-                </div>
+              <div className="flex items-center justify-start gap-x-4 py-2 px-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-l-4 border-green-400">
                 <div className="text-sm text-lime-700 font-medium">5 - 10</div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-px bg-lime-500 mr-2"></div>
+                  <span className="text-sm font-medium text-lime-800">Good</span>
+                </div>
               </div>
               
-              <div className="flex items-center justify-between py-2 px-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+              <div className="flex items-center justify-start gap-x-4 py-2 px-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-l-4 border-yellow-400">
+                <div className="text-sm text-yellow-700 font-medium">10 - 15</div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-px bg-yellow-500 mr-2"></div>
                   <span className="text-sm font-medium text-yellow-800">Moderate</span>
                 </div>
-                <div className="text-sm text-yellow-700 font-medium">10 - 15</div>
               </div>
               
-              <div className="flex items-center justify-between py-2 px-3 bg-orange-50 rounded-lg border-l-4 border-orange-400">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+              <div className="flex items-center justify-start gap-x-4 py-2 px-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-l-4 border-orange-400">
+                <div className="text-sm text-orange-700 font-medium">15 - 20</div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-px bg-orange-500 mr-2"></div>
                   <span className="text-sm font-medium text-orange-800">Weak</span>
                 </div>
-                <div className="text-sm text-orange-700 font-medium">15 - 20</div>
               </div>
               
-              <div className="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg border-l-4 border-red-400">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              <div className="flex items-center justify-start gap-x-4 py-2 px-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-l-4 border-red-400">
+                <div className="text-sm text-red-700 font-medium">&gt; 20</div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-px bg-red-500 mr-2"></div>
                   <span className="text-sm font-medium text-red-800">Poor</span>
                 </div>
-                <div className="text-sm text-red-700 font-medium">&gt; 20</div>
               </div>
             </div>
           </div>
