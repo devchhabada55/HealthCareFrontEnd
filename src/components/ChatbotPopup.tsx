@@ -7,14 +7,18 @@ import { cn } from '@/lib/utils'; // Assuming cn utility is for conditional clas
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'; // Use Vite's environment variables
 
+interface ChatMessage {
+  text: string;
+  sender: 'user' | 'bot';
+}
+
 const ChatbotPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<{
-    text: string;
-    sender: 'user' | 'bot';
-  }[]>([{ text: 'Welcome to 2h centre, How can I help you?', sender: 'bot' }]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]); // Initialize with an empty array
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hasSentFirstWelcome, setHasSentFirstWelcome] = useState(false); // New state to track first welcome
+  const [hasSentSecondWelcome, setHasSentSecondWelcome] = useState(false); // New state to track second welcome
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -22,23 +26,44 @@ const ChatbotPopup = () => {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputMessage.trim()) {
+    const trimmedInput = inputMessage.trim();
+    if (trimmedInput) {
       setLoading(true);
-      setMessages(prevMessages => [...prevMessages, { text: inputMessage, sender: 'user' }]);
+      const newUserMessage: ChatMessage = { text: trimmedInput, sender: 'user' };
 
-      // Add the second welcome message if it's the user's first interaction after the initial bot greeting
-      if (messages.length === 1) {
-        setMessages(prevMessages => [...prevMessages, { text: 'Welcome to your personal health space. Whether it\'s a question about nutrition, wellness, or recovery—I\'ve got your back', sender: 'bot' }]);
+      // Add user's message to the display immediately
+      setMessages(prevMessages => [...prevMessages, newUserMessage]);
+
+      // Logic for the first welcome message
+      if (!hasSentFirstWelcome) {
+        setMessages(prevMessages => [
+          ...prevMessages,
+          { text: 'Welcome to 2h centre, How can I help you?', sender: 'bot' }
+        ]);
+        setHasSentFirstWelcome(true);
+        setLoading(false);
+        setInputMessage('');
+        return; // Stop here for the first welcome message
+      }
+
+      // Logic for the second welcome message, only after the first has been sent
+      if (hasSentFirstWelcome && !hasSentSecondWelcome) {
+        setMessages(prevMessages => [
+          ...prevMessages,
+          { text: 'Welcome to your personal health space. Whether it\'s a question about nutrition, wellness, or recovery—I\'ve got your back', sender: 'bot' }
+        ]);
+        setHasSentSecondWelcome(true);
+        setLoading(false); // Ensure loading is false after displaying the message
+        setInputMessage(''); // Clear input after displaying the message
+        return; // Stop here for the second welcome message
       }
 
       try {
-        const response = await axios.post(`${API_BASE_URL}/api/chatbot/chat`, { message: inputMessage });
+        const response = await axios.post(`${API_BASE_URL}/api/chatbot/chat`, { message: trimmedInput });
         const reply = response.data.reply;
-
         setMessages(prevMessages => [...prevMessages, { text: reply, sender: 'bot' }]);
       } catch (error) {
         console.error('Error communicating with chatbot:', error);
-        setMessages(prevMessages => [...prevMessages, { text: 'Sorry, I couldn\'t process your request.', sender: 'bot' }]);
       } finally {
         setLoading(false);
         setInputMessage('');
