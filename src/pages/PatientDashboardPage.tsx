@@ -44,7 +44,7 @@ const getStoredRequests = (): PatientRequest[] => {
       const demoRequests: PatientRequest[] = [
         {
           id: 1,
-          patientName: 'Jane Doe',
+          patientName: 'Yves Vannerom',
           patientId: 'p001',
           type: 'Consultation Request',
           message: 'Need help understanding my latest blood test results',
@@ -247,7 +247,7 @@ const PatientDashboardPage = () => {
 
   // Patient information - In a real app, this would come from an API
   const patientInfo = {
-    name: isAdmin ? (patientId === 'p002' ? 'John Smith' : 'Jane Doe') : 'Your Profile',
+    name: isAdmin ? (patientId === 'p002' ? 'Yves Vannerom ' : 'Yves Vannerom ') : 'Your Profile',
     age: isAdmin ? (patientId === 'p002' ? 45 : 32) : 29,
     gender: isAdmin ? (patientId === 'p002' ? 'Male' : 'Female') : 'Female'
   };
