@@ -50,7 +50,10 @@ const ChatbotPopup = () => {
       if (hasSentFirstWelcome && !hasSentSecondWelcome) {
         setMessages(prevMessages => [
           ...prevMessages,
-          { text: 'Welcome to your personal health space. Whether it\'s a question about nutrition, wellness, or recovery—I\'ve got your back', sender: 'bot' }
+          { 
+  text: 'For short-term relief from tennis elbow:\nRest the arm, apply ice for 15–20 minutes several times a day, take anti-inflammatory meds like ibuprofen, and wear a forearm brace. Avoid activities that strain the elbow.', 
+  sender: 'bot' 
+}
         ]);
         setHasSentSecondWelcome(true);
         setLoading(false); // Ensure loading is false after displaying the message
