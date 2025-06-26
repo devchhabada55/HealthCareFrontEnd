@@ -137,8 +137,8 @@ const AdminDashboardPage = () => {
   const dummyPatients = [
     {
       id: 'p001',
-      name: 'Jane Doe',
-      username: 'janedoe',
+      name: 'Yves Vannerom',
+      username: 'YvesVannerom',
       reportsUploaded: uploadedReports['p001']?.length > 0,
       lastVisit: '2024-06-10',
       status: 'Active',
